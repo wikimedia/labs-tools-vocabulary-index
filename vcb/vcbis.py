@@ -278,7 +278,8 @@ else:
   comment = 'Indexation automatique du vocabulaire pour les langues étrangères. Youni Verciti Bot'
   if args.test: # ATTENTION
     new_page = 'Projet:Laboratoire/Propositions/Index_vocabulaire/vcb '+ lastName
-    sommaire = u'Projet:Laboratoire/Propositions/Index_vocabulaire'
+    sommaire = u'Projet:Laboratoire/Propositions/Index_vocabulaire#Exemples'
+    print newpage + 'La nouvelle page se trouve dans l\'espace de test du laboratoire.\nVous devez créer le lien manuellement.'
     
   print 'Page à publier:       ' + new_page
   new_page = unicode(new_page, 'utf-8')  # UNICODE
@@ -293,44 +294,62 @@ else:
     title = sommaire     # vérifier existance de dpt/Index vocabulaire
     page = pywikibot.Page(site, title)
     exist = page.exists()
-    if exist:   # Test existance de la page du sommaire
-      print ' Le sommaire existe:' + sommaire  # Hote du lien à créer: sommaire
+    if exist:   # Test exist page du sommaire
+      print 'Le sommaire existe:' + sommaire  # Hote du lien à créer: sommaire
       ### BUG si la page existe mais ne contient aucun lien le programme se termine
       ### en théorie la situation ne peut se produire que  par modif manuelle
       ### AJOUTER UNE CONDITION si genLN vide
-       
       genLN = page.linkedPages(namespaces=0)
-      for linked in genLN:   ### l'objet pagegenerator PWB
-	# print type(linked)  ### contient des objets page.Page
+      for linked in genLN:   ### l'objet pagegenerator PWB contient des objets page.Page
 	print linked.title()   ### la syntaxe PWB pour extaire le titre UNICODE
 	if linked.title() == new_page:  # le lien existe
-	  #create_link = False   # le boléen devient faut
 	  print 'le lien est déja en place dans le sommaire\n Le programme se termine avec succès, actualiser la page <vcb>'
-	  exit   # Le programme se TERMINE
-      ## Sortie de boucle
+	  exit()
+	  #ArgumentParser.exit(status=0, message=None)
+	  #exit   # Le programme se TERMINE
+      ## Sortie de boucle le lien n'y est pas le prog se POURSUIT
       print 'Création du lien vers la nouvelle page'
-      response = insert(list_sections, new_page, sommaire)  # ATTENTION, lastName
-      # Modifier la fonction insert pour prendre en compte lastNAme comme titre
-      # si list_section vide utiliser lastName attention si lastname vide ecrire au debut
-      [title, insert] = response
+      #section_index = 0
+      insert_txt = u''
+      lastName_uni = unicode(lastName, 'utf-8')
+      if len(list_sections) == 0:
+        if lastName == '':
+          list_sections.append(rootName) # la fonction write_position attend une string
+        else:
+	  list_sections.append(lastName)
+      #print len(list_sections)
+      #print list_sections
+      fx_wp = write_position (list_sections, sommaire)
+      [sommaire, section_index] = fx_wp
+      print section_index  
+      section_write = insert(section_index, list_sections)
+      #print sommaire
+      #print section_index
+      #print section_write       
+      ### Ajoute le lien 
+      link_write  = section_write + '\n' + '* [[' + new_page + ' | Vocabulaire ' + lastName_uni + ']]\n' 
+      title = sommaire
       page = pywikibot.Page(site, title) # PWB variable
       witext = page.get()
-      page.text = witext + insert # AJOUTE LA CHAINE DANS LA SECTION cf URL
+      page.text = witext + link_write # AJOUTE LA CHAINE DANS LA SECTION cf URL
       comment = u'Ajout du lien au sommaire des fiches de vocabulaire'
       page.save(comment)      
+      print sommaire
+      print link_write
     else:   # PAS DE SOMMAIRE Creation du sommaire des sections et du lien
       print 'Création du sommaire des fiches vocabulaire!'
-      ### Copie de la deuxime partie de la fonction insert (scinder fx insert)
-      for section in list_sections:
-	nbre_eq = list_sections.index(section) + 2
-	fix = ''   # il reste à écrire les sections suivantes
-	count = 1
-	while count <= nbre_eq:  ### ajouter automatiquement 1 caractère égal en fonction de liste.index
-	  fix = fix + '='
-	  count = count + 1
-	insert = insert + '\n' + fix + ' ' + section + ' ' + fix # Debut concaténation des sections
+      section_write = insert(section_index, list_sections)
+      #### Copie de la deuxime partie de la fonction insert (scinder fx insert)
+      #for section in list_sections:
+	#nbre_eq = list_sections.index(section) + 2
+	#fix = ''   # il reste à écrire les sections suivantes
+	#count = 1
+	#while count <= nbre_eq:  ### ajouter automatiquement 1 caractère égal en fonction de liste.index
+	  #fix = fix + '='
+	  #count = count + 1
+	#insert = insert + '\n' + fix + ' ' + section + ' ' + fix # Debut concaténation des sections
       # en sortant de la boucle on ajoute le lien
-      insert = insert + '\n' + page_to_link
+      link_write = section_write + '\n' + new_page
       title = sommaire
       page = pywikibot.Page(site, title)
       comment = u'Création du sommaire, avec le lien vers la nouvelle page de vocabulaire.'

@@ -5,22 +5,22 @@ import urllib
 import pywikibot
 import datetime
 
-### USTR transforme en string puis unicode
-def ustr(myvar):
+### USTR transforme en string puis unicode 
+def ustr(myvar):   ### Verifier si necessaire?¿
   mystr = str(myvar)
   myu = unicode(mystr, 'utf-8')
   return myu
 
 ### DEF APOSOFF
 def aposoff(instr):   # Apostrophe_Off(Inside_String) enleve les '' et ''' de la chaine
-  reAps = re.compile('\'{2,3}')
+  reAps = re.compile('\'{2,3}')           # RegEx pour les groupes de 2 ou 3 apostrophes
   nbApo = len(re.findall(reAps, instr))   # nombre d'item
   if nbApo > 0:   # SI apostrophes dans mystr
     filAps = re.finditer(reAps, instr)    # Find Iter List les occurences  regex '' et '''
     iDeb = 0      # debut de la recherche
     cleaned = ''  # initialise la chaîne pour recevoir la clé sans apostrophe de formatage
     n=1           # initialise le compteur de boucle
-    for l in filAps:   # POUR CHAQUE mo in fil
+    for l in filAps:   # POUR CHAQUE mo in fil (VOIR SI ON FAIT MIEUX AVEC WHILE)
       if n < nbApo:       # TANT QUE ce n'est pas le dernier
 	clean = instr[iDeb:l.start()]   # Calcul le debut sans aps
         cleaned = cleaned + clean       # Ajoute la section debut sans aps à la mystr cleaned
@@ -128,14 +128,14 @@ def linkedlines(simplewords, rootLang):
 
 ### ECRITURE DE LA LISTE A PUBLIER
 def writelist(dataPack):
-  [scriptName, allFiles, nbMod, nbLine, uArg1, secW, secL, secP] = dataPack
+  [scriptName, allFiles, nbMod, nbLine, cible_unicode, secW, secL, secP] = dataPack
   now = datetime.date.today()   # PASSER AU FORMAT FRANÇAIS
   tnow = str(now)               # pour écrire la date 
   head1 = u'{{Entête de fiche}}<small> Liste auto. script: ' + scriptName + ' - Date: ' + tnow + ' - ' + ustr(allFiles) + ' pages - '
   head2 = str(nbMod) + ' modèles - ' + str(nbLine) + ' lignes.</small><br>'
   head2 = unicode(head2, 'utf-8')
   #head2 = unicode(str(nbMod), 'utf-8') + ' modèles - ' + ustr(nbLine) + ' lignes.</small><br>'
-  backLink = 'Retour: [[' + uArg1 + ']]\n' # Lien pour retourner à la leçon
+  backLink = 'Retour: [[' + cible_unicode + ']]\n' # Lien pour retourner à la leçon
   txtin = head1 + head2 + backLink
   if secW <> '':
     section1 = '== Mots ==\n<div style="-moz-column-count:2; column-count:2;">\n'

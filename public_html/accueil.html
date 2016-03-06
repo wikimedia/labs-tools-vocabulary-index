@@ -1,0 +1,33 @@
+<big>Indexation du vocabulaire pour la faculté de langues étrangères de la Wikiversité francophone</big><br />
+<br />
+Vocabulary-index est un nouveau projet sur:
+<a href="https://tools.wmflabs.org/" name="wmflabs" title="Tools labs tool">https://tools.wmflabs.org/</a> depuis Janvier 2016. <br>
+La solution Git est en place, vous pouvez <a href="http://tools-static.wmflabs.org/vocabulary-index/vocabulary-index.git/">parcourir le dossier .git via http</a>.
+<br />
+Le projet est disponible sur Gerrit pour <a href="https://gerrit.wikimedia.org/r/#/admin/projects/labs/tools/vocabulary-index">révision de code</a>.
+<br />
+<br />
+Jusqu'à maintenant, le programme fonctionne uniquement en ligne de commande. C'est un programme écrit en Python qui utilise Pywikibot.<br />
+Essayez: <code>./vcb.py -h</code><br />
+<br />
+Le script principal et les modules se trouvent dans le dossier vcb.<br>
+Le programme scanne les pages données en argument, il cherche deux modèles (traduction et prononciation) collecte les couples de mots et établit des listes de vocabulaire pointant vers les items correspondant des projets Wiktionnaires. 
+Les modèles pris en considération pour la recherche du vocabulaire: <a href="https://fr.wikiversity.org/wiki/Mod%C3%A8le:Traductions" >Traduction(s)</a> et <a href="https://fr.wikiversity.org/wiki/Mod%C3%A8le:Prononciations">Prononciation(s)</a>.
+<br />
+La liste des pages, est obtenue en cherchant les modèles suivants dans la page donnée en argument:
+ <a href="https://fr.wikiversity.org/wiki/Mod%C3%A8le:Le%C3%A7on">Leçon </a> et <a href="https://fr.wikiversity.org/wiki/Mod%C3%A8le:D%C3%A9partement"  name="French template: Département" title="French template: Département">Département</a>.
+<br />
+<br />
+Si vous avez besoin de tester le programme, faites le de préférence sur le  <a href="https://fr.wikiversity.org/wiki/D%C3%A9partement:Portugais">Département:Portugais</a> où il prétend être implémenté.
+<br />
+	<code>./vcb.py Portugais/Grammaire/Nom</code>
+<br />
+<br />
+Le projet au sein du <a href="https://fr.wikiversity.org/wiki/Projet:Laboratoire/Propositions/Index_vocabulaire">laboratoire</a> de la Wikiversité ; avec des listes extraites de différents départements de langues étrangères.<br />
+La <a href="https://fr.wikiversity.org/wiki/Utilisateur:Youni_Verciti_Bot">page du bot</a> sur fr.Wikiversité.
+<br />
+<br />
+Vos commentaires sont les bienvenus <a href="https://wikitech.wikimedia.org/wiki/User_talk:Youni_Verciti" name="User_talk:Youni_Verciti" title="Youni_Verciti">https://wikitech.wikimedia.org/wiki/User_talk:Youni_Verciti</a>.<br />
+<br />
+<div style="text-align: right"><span style="font-size: smaller;"><img src="32px-Bluefish-icon.svg.png" width="32" height="32" alt="" />This is a bluefish (gnu) document.</span>
+

@@ -1,16 +1,36 @@
+<a href="../accueil.html" lang="fr">Version française</a><br />
 <big>Vocabulary indexing for french Wikiversity's foreign languages department</big><br />
 
-Vocabulary-index is a new project just created on <a href="https://tools.wmflabs.org/" name="wmflabs" title="Tools labs tool">https://tools.wmflabs.org/</a> at January 2016. <br>
+Vocabulary-index is a new project just created on:
+<a href="https://tools.wmflabs.org/" name="wmflabs" title="Tools labs tool">https://tools.wmflabs.org/</a> at January 2016. <br>
+<br />
 
-The main script and the modules are in vcbidx directory.<br>
-The git solution is running, you could access the repository by this link: <a href="http://tools-static.wmflabs.org/vocabulary-index/vocabulary-index.git/" title="Git repository">http://tools-static.wmflabs.org/vocabulary-index/vocabulary-index.git/</a><br />
-Next step Guerrit.<br />
-Any comment is welcome at <a href="https://wikitech.wikimedia.org/wiki/User_talk:Youni_Verciti" name="User_talk:Youni_Verciti" title="Youni_Verciti">https://wikitech.wikimedia.org/wiki/User_talk:Youni_Verciti</a>.<br />
-
+The git solution is running.<br />
+To access the repository: 
+<a href="http://tools-static.wmflabs.org/vocabulary-index/vocabulary-index.git/" title="Git repository">http://tools-static.wmflabs.org/vocabulary-index/vocabulary-index.git/</a><br />
+<br />
+Now available on Gerrit:
+<a href="https://gerrit.wikimedia.org/r/#/admin/projects/labs/tools/vocabulary-index" title="Gerrit repository for vocabulary-index">Gerrit repository for vocabulary-index</a>
+<br />
+<br />
 For now the project is just a command line programm using Python and Pywikibot.<br />
 Try: <code><span style="font-size: larger;">./vcb.py -h</span></code><br />
+<br />
+<br />
+The main script and the modules are in vcb directory.<br>
 
+The script will scans files given in arguments, collecting two templates contains, collecting couple of words and creat a page list pointing to the wiktionnary's items.
+The templates scanned are <a href="https://fr.wikiversity.org/wiki/Mod%C3%A8le:Traductions" >Traduction(s)</a> and <a href="https://fr.wikiversity.org/wiki/Mod%C3%A8le:Prononciations">Prononciation(s)</a>.
+<br />
+The files to scan are determined by analasis of french templates <a href="https://fr.wikiversity.org/wiki/Mod%C3%A8le:Le%C3%A7on#Qu.27est-ce_qu.27une_fiche_.3F" name="Leçon" title="French template">Leçon </a> and <a href="https://fr.wikiversity.org/wiki/Mod%C3%A8le:D%C3%A9partement"  name="French template: Département" title="French template: Département">Département</a>.
+<br />
+The <a href="https://fr.wikiversity.org/wiki/Utilisateur:Youni_Verciti_Bot">bot page</a> on fr.Wikiversité.
+<br />
+The bot's <a href="https://fr.wikiversity.org/wiki/Projet:Laboratoire/Propositions/Index_vocabulaire">project in laboraty</a> with templates from various languages départements.
+<br />
+If you need to test the scripts please run it against <a href="https://fr.wikiversity.org/wiki/D%C3%A9partement:Portugais">Département:Portugais</a> where it pretends to be fully implemented.
+<br />
+Any comment are welcome at <a href="https://wikitech.wikimedia.org/wiki/User_talk:Youni_Verciti" name="User_talk:Youni_Verciti" title="Youni_Verciti">https://wikitech.wikimedia.org/wiki/User_talk:Youni_Verciti</a>.<br />
+<br />
+<div style="text-align: right"><span style="font-size: smaller;"><img src="32px-Bluefish-icon.svg.png" width="32" height="32" alt="" />This is a bluefish (gnu) document.</span>
 
-
-
-<div style="text-align: right"><span style="font-size: smaller;">This is a bluefish (gnu) document.</span>
