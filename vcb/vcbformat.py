@@ -84,14 +84,13 @@ def chkword(locution, word):
       if ',' in k:       # Et une virgule
         word[k] = locution[k] # Déplace dans tWord
         kToDelete.append(k)         # Enregistre la clé à detruire
-      
   for k in kToDelete:    # Pour chaque clé à supprimer
     del locution[k]      # Enlève les couples article/mots du tupLocution
 ### Gérer les couples qui commencent par un mot entre parentèses (os)
 ### Gérer les occurences dont chaque mot est séparé par virgules
-### Observer les listes des autres dept
 ### Tester si article+1mot+virgule
-
+### Observer les listes des autres dept
+### Tester si pronom + verbe cf dpt Russe
 
 ### linesans formate les lignes sans liens (locutions & phrases)
 def linesans(locuPhrase):
@@ -128,15 +127,14 @@ def linkedlines(simplewords, rootLang):
 
 ### ECRITURE DE LA LISTE A PUBLIER
 def writelist(dataPack):
-  [scriptName, allFiles, nbMod, nbLine, cible_unicode, secW, secL, secP] = dataPack
+  [script_name, allFiles, nbMod, nbLine, cible_unicode, secW, secL, secP] = dataPack
   now = datetime.date.today()   # PASSER AU FORMAT FRANÇAIS
-  tnow = str(now)               # pour écrire la date 
-  head1 = u'{{Entête de fiche}}<small> Liste auto. script: ' + scriptName + ' - Date: ' + tnow + ' - ' + ustr(allFiles) + ' pages - '
+  date = str(now)               # pour écrire la date 
+  head1 = u'{{Entête de fiche}}<small> Liste auto. script: ' + script_name + ' - Date: ' + date + ' - ' + ustr(allFiles) + ' pages - '
   head2 = str(nbMod) + ' modèles - ' + str(nbLine) + ' lignes.</small><br>'
   head2 = unicode(head2, 'utf-8')
-  #head2 = unicode(str(nbMod), 'utf-8') + ' modèles - ' + ustr(nbLine) + ' lignes.</small><br>'
-  backLink = 'Retour: [[' + cible_unicode + ']]\n' # Lien pour retourner à la leçon
-  txtin = head1 + head2 + backLink
+  back_link = 'Retour: [[' + cible_unicode + ']]\n' # Lien pour retourner à la leçon
+  txtin = head1 + head2 + back_link
   if secW <> '':
     section1 = '== Mots ==\n<div style="-moz-column-count:2; column-count:2;">\n'
     txtin = txtin + section1 + secW
