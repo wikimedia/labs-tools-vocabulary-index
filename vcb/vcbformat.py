@@ -3,7 +3,7 @@
 import re
 import urllib
 import pywikibot
-import datetime
+import datetime #?¿
 
 ### USTR transforme en string puis unicode 
 def ustr(myvar):   ### Verifier si necessaire?¿
@@ -127,23 +127,23 @@ def linkedlines(simplewords, rootLang):
 
 ### ECRITURE DE LA LISTE A PUBLIER
 def writelist(dataPack):
-  [script_name, allFiles, nbMod, nbLine, cible_unicode, secW, secL, secP] = dataPack
+  [script_name, all_pages, nb_templates, nb_lines, cible_unicode, words_formated, locutions_formated, phrases_formated] = dataPack
   now = datetime.date.today()   # PASSER AU FORMAT FRANÇAIS
   date = str(now)               # pour écrire la date 
-  head1 = u'{{Entête de fiche}}<small> Liste auto. script: ' + script_name + ' - Date: ' + date + ' - ' + ustr(allFiles) + ' pages - '
-  head2 = str(nbMod) + ' modèles - ' + str(nbLine) + ' lignes.</small><br>'
+  head1 = u'{{Entête de fiche}}<small> Liste auto. script: ' + script_name + ' - Date: ' + date + ' - ' + ustr(all_pages) + ' pages - '
+  head2 = str(nb_templates) + ' modèles - ' + str(nb_lines) + ' lignes.</small><br>'
   head2 = unicode(head2, 'utf-8')
   back_link = 'Retour: [[' + cible_unicode + ']]\n' # Lien pour retourner à la leçon
   txtin = head1 + head2 + back_link
-  if secW <> '':
+  if words_formated <> '':
     section1 = '== Mots ==\n<div style="-moz-column-count:2; column-count:2;">\n'
-    txtin = txtin + section1 + secW
-  if secL <> '':
+    txtin = txtin + section1 + words_formated
+  if locutions_formated <> '':
     section2 = '</div>\n== Locutions ==\n'
-    txtin = txtin + section2 + secL
-  if secP <> '':
+    txtin = txtin + section2 + locutions_formated
+  if phrases_formated <> '':
     section3 = '== Phrases ==\n'
-    txtin = txtin + section3 + secP
+    txtin = txtin + section3 + phrases_formated
   txtin = txtin + unicode('[[Catégorie:Page auto]]', 'utf-8')
-  #txtin = headDraft+suite+backLnk + section1 + secW + section2 + secL + section3 + secP
+  #txtin = headDraft+suite+backLnk + section1 + words_formated + section2 + locutions_formated + section3 + phrases_formated
   return txtin 

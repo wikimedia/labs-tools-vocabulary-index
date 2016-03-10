@@ -16,35 +16,35 @@ def pathname(path, srv):
   reLesson = re.compile('{{[L|l]eçon')       # RegEx pour trouver le modèle "Leçon"
   reChapitre = re.compile('{{[C|c]hapitre')  # RegEx pour trouver le modèle "Chapitre"
   list_path_elemt = path.split('/')     # split le path dans la liste
-  nbName = len(list_path_elemt)         # list_path_elemt contient tous les elements du path
-  rootName = list_path_elemt[0]         # Premier element
-  lastName = list_path_elemt[nbName -1] # Dernier element
-  list_sections = []  # Liste des sections à l'exclusion de rootName et lastName ex: rootname/nSec1/nSec2/lastname
-  for element in list_path_elemt[1:list_path_elemt.index(lastName)]:  # Exclut rootName et lastName
+  nb_path_elemt = len(list_path_elemt)         # list_path_elemt contient tous les elements du path
+  root_name = list_path_elemt[0]         # Premier element
+  last_name = list_path_elemt[nb_path_elemt -1] # Dernier element
+  list_sections = []  # Liste des sections à l'exclusion de root_name et last_name ex: rootname/nSec1/nSec2/lastname
+  for element in list_path_elemt[1:list_path_elemt.index(last_name)]:  # Exclut root_name et last_name
     list_sections.append(element)
-  lPath = [path, list_path_elemt, rootName, lastName, nbName, list_sections]
+  lPath = [path, list_path_elemt, root_name, last_name, nb_path_elemt, list_sections]
   moLesson = reLesson.search(strfile)   # ATTENTION ici on cherche sur strfile
   moChapitre = reChapitre.search(ufile) # ATTENTION ici on cherche sur ufile - faire un choix!
-  sommaire = unicode(rootName + '/Index vocabulaire', 'utf-8') # titre de la page contenant le sommaire des fiches de vocabulaire
-  if nbName == 1: # Si un seul element dans le path # Attention la condition
+  sommaire = unicode(root_name + '/Index vocabulaire', 'utf-8') # titre de la page contenant le sommaire des fiches de vocabulaire
+  if nb_path_elemt == 1: # Si un seul element dans le path # Attention la condition
     print "La cible est un département, l\'exécution du programme peut prendre prendre plusieurs secondes en fonctions du nombre de leçons à traiter"   # On previent l'utilisateur
-    className = 'Département'      # On attribue className en fonction de l'argument (pas de modèle en cause)
-    new_page = rootName + '/Index vocabulaire/Index global'  # ATTENTION scinder la liste Indexglobal en 3
+    class_doc = 'Département'      # On attribue class_doc en fonction de l'argument (pas de modèle en cause)
+    new_page = root_name + '/Index vocabulaire/Index global'  # ATTENTION scinder la liste Indexglobal en 3
     # word (Index_global_des_mots), locution (Index_global_des_locutions), phrase (Index_global_des_phrases)
   elif moLesson:   # Si la page donnée en argument contient "le modèle Leçon"
-    className = 'Leçon'  # className est attribué par "le modèle Leçon"
-    print 'La cible est une ' + className
-    new_page = rootName + '/Index vocabulaire/vcb ' + lastName
+    class_doc = 'Leçon'  # class_doc est attribué par "le modèle Leçon"
+    print 'La cible est une ' + class_doc
+    new_page = root_name + '/Index vocabulaire/vcb ' + last_name
   elif moChapitre:   # Si la page donnée en argument contient le modèle "Chapitre"
-    className = 'Chapitre'    
-    print 'La cible est un ' + className
-    new_page = rootName + '/Index vocabulaire/vcb '+ lastName
+    class_doc = 'Chapitre'    
+    print 'La cible est un ' + class_doc
+    new_page = root_name + '/Index vocabulaire/vcb '+ last_name
   else:   # Si aucun des modèles suivants: Departement, leçon ou Chapitre
-    className = 'none'
-    print 'Le type de cible est indéfini, ' + className    
-    new_page = rootName + '/Index vocabulaire/vcb ' + lastName
+    class_doc = 'none'
+    print 'Le type de cible est indéfini, ' + class_doc    
+    new_page = root_name + '/Index vocabulaire/vcb ' + last_name
   ### QUELLE DIFFERENCE ENTRE CHAPITRE ET NONE?
-  linker = [className, new_page, sommaire] # Sortie de boucle on sauve les varibles dans linker
+  linker = [class_doc, new_page, sommaire] # Sortie de boucle on sauve les varibles dans linker
   lPath.append(linker) # ajoute linker à la liste lPath (list_path_elements)
   return lPath         # retourne la liste des elements du path
 ### PATHNAME FIN

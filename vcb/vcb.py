@@ -24,14 +24,14 @@ args = parser.parse_args()
 cible_unicode = unicode(args.cible, 'utf-8') # Encodage UNICODE pour PWB 
 ### EXEC PATHNAME
 lPath = pathname(args.cible, srv)       # pathname avec l'argument et le serveur forme la variable lPath
-[path, list_path_elemt, rootName, lastName, nbName, list_sections, linker] = lPath # dont ceci est la composition
-[className, new_page, sommaire] = linker # avec la composition de linker
+[path, list_path_elemt, root_name, last_name, nb_path_elemt, list_sections, linker] = lPath # dont ceci est la composition
+[class_doc, new_page, sommaire] = linker # avec la composition de linker
 
 ###PYWIKIBOT
 title = cible_unicode   # Titre reçoit l'argument au format UNICODE
 page = pywikibot.Page(site, title) # PWB variable
 
-rqRootLang = '?action=languagesearch&format=xml&search=%s' % rootName
+rqRootLang = '?action=languagesearch&format=xml&search=%s' % root_name
 fromPage = args.cible
 toPage = args.cible + 'a'
 rqAllPages = '?action=query&list=allpages&format=xml&apfrom='+fromPage+'&apto='+toPage+'&aplimit=275' # ATTENTION max 275 pages
@@ -55,7 +55,7 @@ if moRootLang:
   rootLang = rootLang[ 15 : len(rootLang)-1 ]
   print rootLang  + '-' + pageLang 
 else:
-  print 'Impossible de déterminer la langue étudiée pour: ' + rootName
+  print 'Impossible de déterminer la langue étudiée pour: ' + root_name
   exit()
 ###
 log = ''     # Variable pour le journal
@@ -73,6 +73,8 @@ reTrad = re.compile('[T|t]raduction\w*')      # recherche les modèles "Traducti
 reEq = re.compile('=')                        # recherche des parametres
 l1 = re.compile('langue1')                    # re pour chercher le paramètre dans les modèles
 l2 = re.compile('langue2')                    # re pour chercher le paramètre dans les modèles
+### le traitement du paramètre noindex?¿
+### rei = re.compile('noindex')      # param pour empecher indexation
 
 ### Liste de pages, via ufileList - stage1
 list_tmp_pg = ufileList.split('>')   # divise pour filtrer le titre des page
@@ -83,10 +85,10 @@ for l in list_tmp_pg:     # pour chaque chaine dans xml list_tmp_pg
     p=mo_title_page.group()       # 
     title_page = p[7:len(p)-1]    # tronque la chaine nom de page
     list_page.append(title_page)  # enregistre liste des pages
-allFiles = len(list_page)         # Voir nbPages ; La fx writepack utilise allfiles pour ecrire le résumé
+all_pages = len(list_page)         # Voir nbPages ; La fx writepack utilise allfiles pour ecrire le résumé
 
 ### Liste des pages pour Leçon et defaut - stage2
-if className == 'Leçon':  # ATTENTION Si type page 'none' traite uniquement la page = chapitre
+if class_doc == 'Leçon':  # ATTENTION Si type page 'none' traite uniquement la page = chapitre
   list_page = shortlist(list_page, cible_unicode)   # Filtre les fichiers de la leçon
 # Analyse modèles de chaque page, creation de listes distinctes pour chaque modèle, 
 lPron = []   # Liste des modèles Prononcition
@@ -107,10 +109,10 @@ for title in list_page: # chaque pages
       moPron = rePron.search(template_name) # cherche prononciation dans liste des modèles
       if moPron:
 	lPron.append(template)      # si pron enregistre dans LISTE PRON
-nbPages = len(list_page)   # Nombre de pages à comparer avec allFiles
+nbPages = len(list_page)   # Nombre de pages à comparer avec all_pages
 nbPron = len(lPron)        # Nombre de modèles prononciation
 nbTrad = len(lTrad)        # Nombre de modèles traduction
-part1_log =str(allFiles) + ' pages au total\n' + str(nbPages) + '  pages dans la liste\n' + str(nbPron) + '  modèle PRON, ' + str(nbTrad) + '  modèle TRAD\n'
+part1_log =str(all_pages) + ' pages au total\n' + str(nbPages) + '  pages dans la liste\n' + str(nbPron) + '  modèle PRON, ' + str(nbTrad) + '  modèle TRAD\n'
 log = log + part1_log
 print '### Les Listes sont prêtes ###' # On obtient une liste pour chaque modele
 ### LISTES FIN
@@ -141,11 +143,11 @@ if nbPron > 0:
 # quand cette 4èmme colonne existe, les données ne sont pas collectée cf log
 ###LPRON FIN Il faudrait detecter la quatrième colonne si existe
 
-nbMod = len(lTrad) # Les modèles pron. versés dans lTrad, nbMod donne le nombre total de modele.
-log = log + str(nbMod) + ' modèles à traiter\n'   #LogInfo
+nb_templates = len(lTrad) # Les modèles pron. versés dans lTrad, nb_templates donne le nombre total de modele.
+log = log + str(nb_templates) + ' modèles à traiter\n'   #LogInfo
 
 ### TRAITEMENT LISTE TRADUCTION
-if nbMod > 0:
+if nb_templates > 0:
   for template_object in lTrad: # LTRAD
     template_name = template_object[0]      # Nom du modèle
     template_params = template_object[1]    # Liste des paramètres
@@ -243,7 +245,7 @@ if len(removeDict) > 0:
   # Portugais indexGlobal plante aussi sur cette ligne
   log = log + tplInsideLog
 
-nbLine = len(finalDict)   # Le nombre de ligne dans le dictionnaire apres nettoyage
+nb_lines = len(finalDict)   # Le nombre de ligne dans le dictionnaire apres nettoyage
 wlp = divdict(finalDict)  # Division en 3 listes Word, Locution, Phrase
 [tupWord, tupLocution, tupPhrase] = wlp # Le tuple contient les 3 listes
 chkword(tupLocution, tupWord)   # Sépare les locutions dont le formatage permet le deplacement dans la liste des mots simples
@@ -261,22 +263,22 @@ nb_phrases = len(tupPhrase)
 resume_log = str(nb_words) + ' mots, ' + str(nb_locutions) + ' locutions, ' + str(nb_phrases) + ' phrases.\n'
 log = log + resume_log
 
-secW = linkedlines(tupWord, rootLang)
-secL = linesans(tupLocution)
-secP = linesans(tupPhrase)
+words_formated = linkedlines(tupWord, rootLang)
+locutions_formated = linesans(tupLocution)
+phrases_formated = linesans(tupPhrase)
 
 script_name = sys.argv[0]
-writePack = [script_name, allFiles, nbMod, nbLine, cible_unicode, secW, secL, secP]
+writePack = [script_name, all_pages, nb_templates, nb_lines, cible_unicode, words_formated, locutions_formated, phrases_formated]
 print '### Log: ###'
 print log
-if nbLine < 5:
+if nb_lines < 5:
   print 'Pas suffisament de données pour créer une page. Minimum 5 lignes.'
-  print nbLine
+  print nb_lines
 else:
   txtin = writelist(writePack)
   comment = 'Indexation automatique du vocabulaire pour les langues étrangères. Youni Verciti Bot'
   if args.test: # MODE TEST SAVE IN LABORATOIRE
-    new_page = 'Projet:Laboratoire/Propositions/Index_vocabulaire/vcb '+ lastName
+    new_page = 'Projet:Laboratoire/Propositions/Index_vocabulaire/vcb '+ last_name
     sommaire = u'Projet:Laboratoire/Propositions/Index_vocabulaire#Exemples'
     print new_page + 'La nouvelle page se trouve dans l\'espace de test du laboratoire.\nLe lien en bas de la page.'
   print 'Page à publier:       ' + new_page
@@ -294,7 +296,7 @@ else:
     exist = page.exists()
     if exist:   # Test exist page du sommaire
       print 'Le sommaire existe:' + sommaire    # Hote du lien à créer: sommaire
-      lastName_uni = unicode(lastName, 'utf-8') # UNICODE!
+      last_name_uni = unicode(last_name, 'utf-8') # UNICODE!
       link_generator = page.linkedPages(namespaces=0)   # L'objet PWB
       if link_generator:  # Si le sommaire contient des liens dans l'espace principal
 	for linked in link_generator:    ### l'objet pagegenerator PWB contient des objets page.Page
@@ -304,7 +306,7 @@ else:
 	    exit()
       ## Sortie de boucle le lien n'y est pas le prog se POURSUIT
       print 'Création du lien vers la nouvelle page'      
-      link_write  = '\n' + '* [[' + new_page + ' | Vocabulaire ' + lastName_uni + ']]\n' 
+      link_write  = '\n' + '* [[' + new_page + ' | Vocabulaire ' + last_name_uni + ']]\n' 
       title = sommaire
       page = pywikibot.Page(site, title) # PWB variable
       witext = page.get()
@@ -315,7 +317,7 @@ else:
       print link_write
     else:   # PAS DE SOMMAIRE Creation du sommaire des sections et du lien
       print 'Création du sommaire des fiches vocabulaire!'
-      link_write =  '\n[[' + new_page + ' | Vocabulaire ' + lastName_uni + ']]\n'
+      link_write =  '\n[[' + new_page + ' | Vocabulaire ' + last_name_uni + ']]\n'
       title = sommaire
       page = pywikibot.Page(site, title)
       comment = u'Création du sommaire, avec le lien vers la nouvelle page de vocabulaire.'
