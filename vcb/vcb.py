@@ -26,7 +26,7 @@ cible_unicode = unicode(args.cible, 'utf-8') # Encodage UNICODE pour PWB
 lPath = pathname(args.cible, srv)       # pathname avec l'argument et le serveur forme la variable lPath
 [path, list_path_elemt, rootName, lastName, nbName, list_sections, linker] = lPath # dont ceci est la composition
 [className, new_page, sommaire] = linker # avec la composition de linker
-print className # Affiche  le type de page
+
 ###PYWIKIBOT
 title = cible_unicode   # Titre reçoit l'argument au format UNICODE
 page = pywikibot.Page(site, title) # PWB variable
@@ -293,31 +293,17 @@ else:
     page = pywikibot.Page(site, title)
     exist = page.exists()
     if exist:   # Test exist page du sommaire
-      print 'Le sommaire existe:' + sommaire  # Hote du lien à créer: sommaire
-      lastName_uni = unicode(lastName, 'utf-8')
-      ### BUG si la page existe mais ne contient aucun lien le programme se termine
-      ### AJOUTER UNE CONDITION si genLN vide
-      genLN = page.linkedPages(namespaces=0)
-      for linked in genLN:   ### l'objet pagegenerator PWB contient des objets page.Page
-	#print linked.title()   ### la syntaxe PWB pour extaire le titre UNICODE
-	if linked.title() == new_page:  # le lien existe
-	  print 'Le lien est déja en place dans le sommaire.\nLe programme se termine avec succès, actualiser la page <vcb>.'
-	  exit()
+      print 'Le sommaire existe:' + sommaire    # Hote du lien à créer: sommaire
+      lastName_uni = unicode(lastName, 'utf-8') # UNICODE!
+      link_generator = page.linkedPages(namespaces=0)   # L'objet PWB
+      if link_generator:  # Si le sommaire contient des liens dans l'espace principal
+	for linked in link_generator:    ### l'objet pagegenerator PWB contient des objets page.Page
+	  #print linked.title()          ### la syntaxe PWB pour extaire le titre UNICODE
+	  if linked.title() == new_page: # Le lien pour notre nouvelle page existe
+	    print 'Le lien est déja en place dans le sommaire.\nLe programme se termine avec succès, actualiser la page <vcb>.'
+	    exit()
       ## Sortie de boucle le lien n'y est pas le prog se POURSUIT
-      print 'Création du lien vers la nouvelle page'
-      #insert_txt = u''
-      #lastName_uni = unicode(lastName, 'utf-8')
-      #if len(list_sections) == 0:
-        #if lastName == '':
-          #list_sections.append(rootName) # la fonction write_position attend une string
-        #else:
-	  #list_sections.append(lastName)
-      #fx_wp = write_position (list_sections, sommaire)
-      #[sommaire, section_index] = fx_wp
-      #print section_index  
-      #section_write = insert(section_index, list_sections)
-      #link_write  = section_write + '\n' + '* [[' + new_page + ' | Vocabulaire ' + lastName_uni + ']]\n' 
-      
+      print 'Création du lien vers la nouvelle page'      
       link_write  = '\n' + '* [[' + new_page + ' | Vocabulaire ' + lastName_uni + ']]\n' 
       title = sommaire
       page = pywikibot.Page(site, title) # PWB variable
@@ -329,9 +315,6 @@ else:
       print link_write
     else:   # PAS DE SOMMAIRE Creation du sommaire des sections et du lien
       print 'Création du sommaire des fiches vocabulaire!'
-      # section_write = insert(section_index, list_sections)
-      # link_write = section_write + '\n' + new_page
-
       link_write =  '\n[[' + new_page + ' | Vocabulaire ' + lastName_uni + ']]\n'
       title = sommaire
       page = pywikibot.Page(site, title)
