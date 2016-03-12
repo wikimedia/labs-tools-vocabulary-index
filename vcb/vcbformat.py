@@ -127,14 +127,15 @@ def linkedlines(simplewords, rootLang):
 
 ### ECRITURE DE LA LISTE A PUBLIER
 def writelist(dataPack):
-  [script_name, all_pages, nb_templates, nb_lines, cible_unicode, words_formated, locutions_formated, phrases_formated] = dataPack
+  [script_name, all_pages, nb_templates, nb_lines, cible_unicode, words_formated, locutions_formated, phrases_formated, root_name_uni, last_name_uni] = dataPack
   now = datetime.date.today()   # PASSER AU FORMAT FRANÇAIS
   date = str(now)               # pour écrire la date 
-  head1 = u'{{Entête de fiche}}<small> Liste auto. script: ' + script_name + ' - Date: ' + date + ' - ' + ustr(all_pages) + ' pages - '
-  head2 = str(nb_templates) + ' modèles - ' + str(nb_lines) + ' lignes.</small><br>'
-  head2 = unicode(head2, 'utf-8')
+  head = u'{{Titre | Index vocabulaire ' + last_name_uni +'}}'
+  source = u'<small> Liste auto. script: ' + script_name + ' - Date: ' + date + ' - ' + ustr(all_pages) + ' pages - '
+  resume = str(nb_templates) + ' modèles - ' + str(nb_lines) + ' lignes.</small><br>'
+  resume = unicode(resume, 'utf-8')
   back_link = 'Retour: [[' + cible_unicode + ']]\n' # Lien pour retourner à la leçon
-  txtin = head1 + head2 + back_link
+  txtin = head + source + resume + back_link
   if words_formated <> '':
     section1 = '== Mots ==\n<div style="-moz-column-count:2; column-count:2;">\n'
     txtin = txtin + section1 + words_formated
@@ -143,7 +144,23 @@ def writelist(dataPack):
     txtin = txtin + section2 + locutions_formated
   if phrases_formated <> '':
     section3 = '== Phrases ==\n'
-    txtin = txtin + section3 + phrases_formated
-  txtin = txtin + unicode('[[Catégorie:Page auto]]', 'utf-8')
+    txtin = txtin + section3 + phrases_formated  
+  category = u'\n[[Catégorie:' + root_name_uni + u'/Vocabulaire/Index]] [[Catégorie:Page auto]]'  ### ATTENTION
+  # {{Autocat}} travail dans dpt/Index vocabulaire - gestion des categories super-complexe
+  # Phase 2: on s'en tient à catégoriser toutes les pages dans dpt/Vocabulaire/Index
+  # On conserve "Page auto" qui permet de retrouver toutes les fiches (catégorie:Fiches vocabulaire interwiki)
+  # Sans verifier ni créer les catégories - phase 3: utiliser back_link pour categoriser d'avantage
+  txtin = txtin + category
+  #unicode('[[Catégorie:Page auto]]', 'utf-8') + category
   #txtin = headDraft+suite+backLnk + section1 + words_formated + section2 + locutions_formated + section3 + phrases_formated
   return txtin 
+
+#### ECRITURE INDEX GLOBAUX ###
+#def writedpt(datapack):
+  #[script_name, all_pages, nb_templates, nb_lines, cible_unicode, words_formated, locutions_formated, phrases_formated, root_name_uni, last_name_uni, class_doc] = dataPack
+  #now = datetime.date.today()   # PASSER AU FORMAT FRANÇAIS
+  #date = str(now)               # pour écrire la date 
+  #if words_formated <> '':
+    #head = u'{{Titre | Index global des mots du département ' + root_name_uni +'}}'
+    #txtin = head + words_formated + category
+  

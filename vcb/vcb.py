@@ -22,12 +22,15 @@ parser.add_argument("-t", "--test", help="Enregistre la liste dans l'espace de t
                     action="store_true")
 args = parser.parse_args()
 cible_unicode = unicode(args.cible, 'utf-8') # Encodage UNICODE pour PWB 
+
 ### EXEC PATHNAME
 lPath = pathname(args.cible, srv)       # pathname avec l'argument et le serveur forme la variable lPath
 [path, list_path_elemt, root_name, last_name, nb_path_elemt, list_sections, linker] = lPath # dont ceci est la composition
 [class_doc, new_page, sommaire] = linker # avec la composition de linker
 
 ###PYWIKIBOT
+root_name_uni = unicode(root_name, 'utf-8')
+last_name_uni = unicode(last_name, 'utf-8') # UNICODE!
 title = cible_unicode   # Titre reçoit l'argument au format UNICODE
 page = pywikibot.Page(site, title) # PWB variable
 
@@ -101,14 +104,28 @@ for title in list_page: # chaque pages
   if gen:                            # si l'objet generator existe
     for template in gen:             # pour chaque item du generator
       template_name = template[0]    # Le nom de la pge du modele
-      template_params = template[1] # liste des parametres
+      template_params = template[1]  # liste des parametres
       template_name = str(template_name)
       moTrad = reTrad.search(template_name) # cherche trad dans liste des modeles
       if moTrad:
-	lTrad.append(template)      # si trad enregistre dans LISTE TRAD
+	if u'indexation = non' in template_params: # strictement |indexation = non|
+	  print 'Le modèle suivant est marqué pour ne pas être indexé (indexation = non)\n'
+	  print title           # implémentation rapide du parametre
+	  print template_name   # indexation = non
+	  print template_params # utiliser regex pour améliorer
+	  pass
+	else:
+	  lTrad.append(template)      # si trad enregistre dans LISTE TRAD
       moPron = rePron.search(template_name) # cherche prononciation dans liste des modèles
       if moPron:
-	lPron.append(template)      # si pron enregistre dans LISTE PRON
+	if u'indexation = non' in template_params: # strictement |indexation = non|
+	  print 'Le modèle suivant est marqué pour ne pas être indexé (indexation = non)\n'
+	  print title           # implémentation rapide du parametre
+	  print template_name   # indexation = non
+	  print template_params # utiliser regex pour améliorer
+	  pass 
+	else:
+	  lPron.append(template)      # si pron enregistre dans LISTE PRON
 nbPages = len(list_page)   # Nombre de pages à comparer avec all_pages
 nbPron = len(lPron)        # Nombre de modèles prononciation
 nbTrad = len(lTrad)        # Nombre de modèles traduction
@@ -240,22 +257,22 @@ if len(removeDict) > 0:
     print rmk
     # rmv = removeDict[rmk] #?¿
     del finalDict[rmk]    # supprime la clé de finalDict
-  #tplInsideLog = tplInsideLog  + str(rmv)#unicode(rmk, 'utf-8')# +  str(rmv) + '\n'
+  # tplInsideLog = tplInsideLog  + str(rmv)#unicode(rmk, 'utf-8')# +  str(rmv) + '\n'
   # Japonais/Vocabulaire ne reussit pas à convertir rmk et rmv en string ni en unicode
   # Portugais indexGlobal plante aussi sur cette ligne
   log = log + tplInsideLog
 
 nb_lines = len(finalDict)   # Le nombre de ligne dans le dictionnaire apres nettoyage
-wlp = divdict(finalDict)  # Division en 3 listes Word, Locution, Phrase
+wlp = divdict(finalDict)    # Division en 3 listes Word, Locution, Phrase
 [tupWord, tupLocution, tupPhrase] = wlp # Le tuple contient les 3 listes
 chkword(tupLocution, tupWord)   # Sépare les locutions dont le formatage permet le deplacement dans la liste des mots simples
 ### TRAITEMENT DES ARTICLES RECONNUS SELON LANGPACK
-for lang in langPack:  
-  pack = langPack[lang]
+for lang in lang_pack:  
+  pack = lang_pack[lang]
   if lang == rootLang:
     chkarticle(tupLocution, tupWord, pack)
   else:
-    print ' Pas de langPack'
+    print ' Pas de lang_pack'
 ### JOURNALISE TAILLE DES LISTES
 nb_words = len(tupWord)
 nb_locutions = len(tupLocution)
@@ -268,14 +285,14 @@ locutions_formated = linesans(tupLocution)
 phrases_formated = linesans(tupPhrase)
 
 script_name = sys.argv[0]
-writePack = [script_name, all_pages, nb_templates, nb_lines, cible_unicode, words_formated, locutions_formated, phrases_formated]
+write_pack = [script_name, all_pages, nb_templates, nb_lines, cible_unicode, words_formated, locutions_formated, phrases_formated, root_name_uni, last_name_uni]
 print '### Log: ###'
 print log
 if nb_lines < 5:
   print 'Pas suffisament de données pour créer une page. Minimum 5 lignes.'
   print nb_lines
 else:
-  txtin = writelist(writePack)
+  txtin = writelist(write_pack)
   comment = 'Indexation automatique du vocabulaire pour les langues étrangères. Youni Verciti Bot'
   if args.test: # MODE TEST SAVE IN LABORATOIRE
     new_page = 'Projet:Laboratoire/Propositions/Index_vocabulaire/vcb '+ last_name
@@ -291,17 +308,21 @@ else:
     print 'Pas sauvegardé, exception'
   else:
     print 'Feĺicitation vous avez enregistré une nouvelle page de vocabulaire'
-    title = sommaire     # vérifier existance de dpt/Index vocabulaire
+    #last_name_uni = unicode(last_name, 'utf-8') # UNICODE!
+    title = sommaire                            
     page = pywikibot.Page(site, title)
-    exist = page.exists()
-    if exist:   # Test exist page du sommaire
+    exist = page.exists()                       # vérifie existance du sommaire dpt/Index vocabulaire
+    if exist:                                   # La page du sommaire
       print 'Le sommaire existe:' + sommaire    # Hote du lien à créer: sommaire
-      last_name_uni = unicode(last_name, 'utf-8') # UNICODE!
+      #last_name_uni = unicode(last_name, 'utf-8') # UNICODE!
       link_generator = page.linkedPages(namespaces=0)   # L'objet PWB
       if link_generator:  # Si le sommaire contient des liens dans l'espace principal
 	for linked in link_generator:    ### l'objet pagegenerator PWB contient des objets page.Page
-	  #print linked.title()          ### la syntaxe PWB pour extaire le titre UNICODE
+	  print linked.title()          ### la syntaxe PWB pour extaire le titre UNICODE
 	  if linked.title() == new_page: # Le lien pour notre nouvelle page existe
+	    # BUG: Le programme ne voit pas que le lien du chapitre est deja en place dans l'exemple suivant:!
+            # [[Portugais/Index vocabulaire/vcb Articles_définis | Vocabulaire Articles_définis]]
+            # Le dernier espace est interpré comme une option l'ajout de _ provoque une différence...
 	    print 'Le lien est déja en place dans le sommaire.\nLe programme se termine avec succès, actualiser la page <vcb>.'
 	    exit()
       ## Sortie de boucle le lien n'y est pas le prog se POURSUIT
@@ -317,11 +338,12 @@ else:
       print link_write
     else:   # PAS DE SOMMAIRE Creation du sommaire des sections et du lien
       print 'Création du sommaire des fiches vocabulaire!'
-      link_write =  '\n[[' + new_page + ' | Vocabulaire ' + last_name_uni + ']]\n'
-      title = sommaire
+      head = u'{{Titre | Index vocabulaire du département ' + root_name_uni +'}}'
+      link_write =  u'\n[[' + new_page + ' | Vocabulaire ' + last_name_uni + ']]\n'
+      category = u'\n[[Catégorie:' + root_name_uni + '/Vocabulaire/Index]]'  #
       page = pywikibot.Page(site, title)
-      comment = u'Création du sommaire, avec le lien vers la nouvelle page de vocabulaire.'
-      page.text = insert # EDITE LE TEXTE DE LA PAGE
+      comment = u'Création du sommaire des fiches vocabulaire, avec un premier lien.'
+      page.text = head + link_write + category   # EDITE LE TEXTE DE LA PAGE
       page.save(comment)
       
 #time.sleep(15)
