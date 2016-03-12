@@ -3,6 +3,7 @@
 import re
 import urllib
 import pywikibot
+
 site = pywikibot.Site('fr', u'wikiversity')
 
 ### PATHNAME sépare l'argument initial en élements du path

@@ -3,7 +3,7 @@
 import re
 import urllib
 import pywikibot
-import datetime #?¿
+import datetime # ?¿
 
 ### USTR transforme en string puis unicode 
 def ustr(myvar):   ### Verifier si necessaire?¿

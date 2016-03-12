@@ -3,7 +3,7 @@
 import re
 import urllib
 import pywikibot
-import datetime #???
+import datetime # ???
 
 lang_pack = {}
 

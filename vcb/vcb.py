@@ -12,7 +12,7 @@ from vcbformat import *
 from international import *
 
 srv="https://fr.wikiversity.org/w/api.php"      # Adresse du serveur API
-site = pywikibot.Site('fr', u'wikiversity')     # Variables PWB,  utile pour determiner pageLang
+site = pywikibot.Site('fr', u'wikiversity')     # Variable PWB, utilisé aussi pour determiner pageLang
 
 ### ARGPARSE
 parser = argparse.ArgumentParser()
