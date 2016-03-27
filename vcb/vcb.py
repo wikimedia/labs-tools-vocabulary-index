@@ -227,7 +227,7 @@ if nb_templates > 0:
         else: # IMPAIR PASS
           pass
     else:
-      error_codes_langues = 'Titres de colonnes: \n' + cdl
+      error_codes_langues = 'Titres de colonnes: \n' + str(cdl)
       log = log + error_codes_langues
       print cdl
       print template_name
@@ -295,11 +295,11 @@ else:
   txtin = writelist(write_pack)
   comment = 'Indexation automatique du vocabulaire pour les langues étrangères. Youni Verciti Bot'
   if args.test: # MODE TEST SAVE IN LABORATOIRE
-    new_page = 'Projet:Laboratoire/Propositions/Index_vocabulaire/vcb '+ last_name
+    new_page = 'Projet:Laboratoire/Propositions/Index_vocabulaire/vcb '+ root_name_uni + ' ' + last_name_uni
     sommaire = u'Projet:Laboratoire/Propositions/Index_vocabulaire#Exemples'
     print new_page + 'La nouvelle page se trouve dans l\'espace de test du laboratoire.\nLe lien en bas de la page.'
-  print 'Page à publier:       ' + new_page
-  new_page = unicode(new_page, 'utf-8')  # UNICODE
+  print 'Page à publier:       ' + str(new_page)
+  #new_page = unicode(new_page, 'utf-8')  # UNICODE (nettoyer)
   page = pywikibot.Page(site, new_page)
   page.text = txtin
   try:
