@@ -4,15 +4,17 @@ import urllib
 import re
 import sys
 import pywikibot # PWB now
-import codecs
 import argparse
 import time
 from vcbscan import *
 from vcbformat import *
 from international import *
+#import codecs
 
-srv="https://fr.wikiversity.org/w/api.php"      # Adresse du serveur API
-site = pywikibot.Site('fr', u'wikiversity')     # Variable PWB, utilisé aussi pour determiner pageLang
+srv="https://fr.wikiversity.org/w/api.php"  # Adresse du serveur API
+language = u"fr"                            # utilisé aussi pour determiner site_lang
+family = u"wikiversity"
+site = pywikibot.Site(language, family)     # Variable PWB
 
 ### ARGPARSE
 parser = argparse.ArgumentParser()
@@ -34,19 +36,12 @@ last_name_uni = unicode(last_name, 'utf-8') # UNICODE!
 title = cible_unicode   # Titre reçoit l'argument au format UNICODE
 page = pywikibot.Page(site, title) # PWB variable
 
+#### LANGUAGE SOURCE via PWB
+site_lang = language
+print 'Le script s\'execute dans l\'espace: ' + str(language) + '\nLangue source: ' + str(site_lang)
+### RECHERCHE ROOTLANG via urrlib
 rqRootLang = '?action=languagesearch&format=xml&search=%s' % root_name
-fromPage = args.cible
-toPage = args.cible + 'a'
-rqAllPages = '?action=query&list=allpages&format=xml&apfrom='+fromPage+'&apto='+toPage+'&aplimit=275' # ATTENTION max 275 pages
 rqParseWkt = '?action=parse&format=xml&page=%s&prop=wikitext&contentdataZone=wikitext' % args.cible   # REQUETE PARSE Format XML content WIKITEXT
-
-### RECHERCHE PAGELANG
-sts =  str(site) # convertit site en string
-i=sts.find(':')  # tronque la première partie
-sts = sts[i+1:]  # defin it langue d'origine
-pageLang = sts   # pageLang (langue native)
-print 'Le script s\'execute dans l\'espace francophone.\nLangue source: fr'
-### RECHERCHE ROOTLANG
 askRootLang = srv + rqRootLang
 objr = urllib.urlopen(askRootLang)
 varf = objr.read()
@@ -56,17 +51,20 @@ moRootLang = reRootLang.search(xml_lang)
 if moRootLang:
   rootLang = moRootLang.group()
   rootLang = rootLang[ 15 : len(rootLang)-1 ]
-  print rootLang  + '-' + pageLang 
+  print 'Département: ' + root_name + ' codes: ' + rootLang  + '-' + str(site_lang )
 else:
   print 'Impossible de déterminer la langue étudiée pour: ' + root_name
   exit()
 ###
-log = ''     # Variable pour le journal
+log = ''        # Variable pour le journal
 lAudio = []     # Liste pour la 3ème colonne du modèle Prononciation
 globalDict = {} # Dictionnaire global 
 ###
 
-### TRAITEMENT DE LA LISTE DEs PAGES
+### TRAITEMENT DE LA LISTE DEs PAGES  (Remplacer par une requete PWB)
+fromPage = args.cible
+toPage = args.cible + 'a'
+rqAllPages = '?action=query&list=allpages&format=xml&apfrom='+fromPage+'&apto='+toPage+'&aplimit=275' # ATTENTION max 275 pages
 fileList = urllib.urlopen(srv + rqAllPages)   # requete fromPage toPage via urllib et APIsrv max limit
 vfileList = fileList.read()
 ufileList = unicode(vfileList, 'utf-8')       # UNICODE XML liste des pages ciblées
@@ -76,9 +74,6 @@ reTrad = re.compile('[T|t]raduction\w*')      # recherche les modèles "Traducti
 reEq = re.compile('=')                        # recherche des parametres
 l1 = re.compile('langue1')                    # re pour chercher le paramètre dans les modèles
 l2 = re.compile('langue2')                    # re pour chercher le paramètre dans les modèles
-### le traitement du paramètre noindex?¿
-### rei = re.compile('noindex')      # param pour empecher indexation
-
 ### Liste de pages, via ufileList - stage1
 list_tmp_pg = ufileList.split('>')   # divise pour filtrer le titre des page
 list_page = []                       # Liste pour titre des pages
@@ -89,18 +84,15 @@ for l in list_tmp_pg:     # pour chaque chaine dans xml list_tmp_pg
     title_page = p[7:len(p)-1]    # tronque la chaine nom de page
     list_page.append(title_page)  # enregistre liste des pages
 all_pages = len(list_page)         # Voir nbPages ; La fx writepack utilise allfiles pour ecrire le résumé
-
 ### Liste des pages pour Leçon et defaut - stage2
-if class_doc == 'Leçon':  # ATTENTION Si type page 'none' traite uniquement la page = chapitre
+if class_doc == 'Leçon':  # ATTENTION Si type page 'none' ?¿
   list_page = shortlist(list_page, cible_unicode)   # Filtre les fichiers de la leçon
 # Analyse modèles de chaque page, creation de listes distinctes pour chaque modèle, 
 lPron = []   # Liste des modèles Prononcition
 lTrad = []   # Liste des modèles Traduction
 for title in list_page: # chaque pages
-  #title = p
   page = pywikibot.Page(site, title)
   gen = page.templatesWithParams() # liste les modèles et contenu
-  #linkIn = 'none'
   if gen:                            # si l'objet generator existe
     for template in gen:             # pour chaque item du generator
       template_name = template[0]    # Le nom de la pge du modele
@@ -170,7 +162,7 @@ if nb_templates > 0:
     template_params = template_object[1]    # Liste des paramètres
     named_params = [] # Liste pour les parametres nommés
     raw1 = rootLang   # initialise les langues
-    raw2 = pageLang   # avec paramètres par défaut
+    raw2 = site_lang   # avec paramètres par défaut
     for param in template_params:  # PARAMETRES
     # ATTENTION API retourne lzh pour chinois mais wikversité utilise zh
       moEq = reEq.search(param)    # cherche symbole egal param nommés
@@ -210,7 +202,7 @@ if nb_templates > 0:
         print 'Celule vide à détruire'
         print moSpaces.group()
         #template_params.remove[lastCel]        
-    if cdl == rootLang + '-' + pageLang and nbCel % 2 == 0:   # Si langues par defaut et nombre cellule paire
+    if cdl == rootLang + '-' + site_lang and nbCel % 2 == 0:   # Si langues par defaut et nombre cellule paire
       for cellule in data:                # Pour chaque donnée dans dataZone
         if data.index(cellule) % 2 == 0:     # Si son index est paire
 	  index_next = data.index(cellule)+1   # Calcul index prochaine valeur
@@ -218,7 +210,7 @@ if nb_templates > 0:
 	  globalDict[cellule] = next_cell      # Dictionnaire Global reçoit mot_PT : mot_FR
         else:          # Ce n'est pas une clé mais une valeur (deja traité)
 	  pass
-    elif cdl == pageLang + '-' + rootLang and nbCel % 2 == 0: # Si langues INVERSE fr-pt celulles paire
+    elif cdl == site_lang + '-' + rootLang and nbCel % 2 == 0: # Si langues INVERSE fr-pt celulles paire
       for cellule in data:                # Pour chaque donnée dans dataZone
         if data.index(cellule) % 2 == 0:     # Si son index est paire
 	  index_next = data.index(cellule) + 1   # Calcul index prochaine valeur

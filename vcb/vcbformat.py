@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import re
-import urllib
 import pywikibot
-import datetime # ?¿
+import datetime # writeliste()
+#import urllib
 
 ### USTR transforme en string puis unicode 
-def ustr(myvar):   ### Verifier si necessaire?¿
-  mystr = str(myvar)
+def ustr(myvar):     ### Verifier si necessaire?¿
+  mystr = str(myvar) ### fonction utilse´e une seule fois
   myu = unicode(mystr, 'utf-8')
   return myu
 
