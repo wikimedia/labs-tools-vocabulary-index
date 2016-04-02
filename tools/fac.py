@@ -80,12 +80,23 @@ def tupleinvert():
     fac_params = data_fac[page]     # une liste de parametres
     [sous_page_fac, nb_sous_page_fac, gen_dpt, nombre_departement] = fac_params # Liste des parametre deja dans le tuple
     for departement in gen_dpt:     # pour chaque departement dans cette faculté
+      #dpt_params = []
+      redir = False
+      redir = departement.isRedirectPage()
+      #dpt_params.append(redir)
+      target_departement = ''
+      if redir == True:
+	target_departement = departement.getRedirectTarget()
+	#print target_departement
+      #dpt_params.append(target_departement)
       if not departement in dpt_fac:  # Si le departement n'est pas dans le tuple inverse
         l_fac = []                     # Initialise Liste des faculté pour ce departement
         l_fac.append(page)             # Ajoute la faculté dans la liste
-        dpt_fac[departement] = l_fac   # enregistre clé valeur dans le tuple invers
+        dpt_params = [redir, target_departement, l_fac]
+        dpt_fac[departement] = dpt_params   # enregistre clé valeur dans le tuple inverse
       else:                           # Le departement est deja dans le tuple inverse
-        l_fac = dpt_fac[departement]   # Recupere la liste 
+        dpt_params = dpt_fac[departement]   # Recupere la liste 
+        [redir, target_departement, l_fac] = dpt_params
         l_fac.append(page)             # Ajoute la faculté dans la liste
   return dpt_fac
 ### Fonctions Etape-4: Edition des pages
@@ -133,17 +144,19 @@ def writelistdpt():
 def writelistdpt2():
   title = title_list_dpt2
   page_txt = u"{{Titre|Liste des départements (automatique)}}\n<small>fac.py</small>\n"
-  page_txt = page_txt + u'{|class="wikitable sortable"\n!Département\n!Nombre de facultés\n!Facultés\n|-\n'
+  page_txt = page_txt + u'{|class="wikitable sortable"\n!Département\n!Nombre de facultés\n!Facultés\n!Redirection\n!Redirige vers\n|-\n'
   tableau = u''
   for departement in dpt_fac:
-    l_fac = dpt_fac[departement]
+    dpt_params = dpt_fac[departement]
+    [redir, target_departement, l_fac] = dpt_params
     nb_fac_dep = len(l_fac)
     fac_txt = ''
     for fac in l_fac:      
       fac_txt = fac_txt + str(fac) + ' '
-    line_txt = "|" + str(departement) + "\n|" + str(nb_fac_dep) + "\n|" 
-    fac_txt = unicode(fac_txt, 'utf-8')
-    line_txt = unicode(line_txt, 'utf-8') + fac_txt + "\n|-\n"
+    line_txt = "|" + str(departement) + "\n|" + str(nb_fac_dep) + "\n|" + fac_txt + "\n|" + str(redir) + "\n|" + str(target_departement) + "\n|-\n"
+    
+    #fac_txt = unicode(fac_txt, 'utf-8')
+    line_txt = unicode(line_txt, 'utf-8') #+ fac_txt + "\n|-\n"
     tableau = tableau + line_txt
   page_txt = page_txt + tableau + u"|}\n[[Catégorie:Laboratoire]]"
   page = pywikibot.Page(site, title) # PWB variable

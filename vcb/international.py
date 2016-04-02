@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import re
-import urllib
 import pywikibot
-import datetime # ???
+# import datetime # ???
+# import urllib
 
 lang_pack = {}
 

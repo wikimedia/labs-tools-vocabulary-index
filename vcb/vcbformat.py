@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import re
 import pywikibot
 import datetime # writeliste()
-#import urllib
 
 ### USTR transforme en string puis unicode 
 def ustr(myvar):     ### Verifier si necessaire?¿
